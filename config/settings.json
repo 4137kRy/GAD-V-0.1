@@ -1,0 +1,6 @@
+{
+  "microphone_id": 1,
+  "vad_threshold": 0.05,
+  "activation_timeout": 300,
+  "active_timeout": 60
+}

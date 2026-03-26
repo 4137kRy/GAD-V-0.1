@@ -1,0 +1,97 @@
+{
+  "activation_phrases": [
+    "джарвис",
+    "эй помощник",
+    "слушай"
+  ],
+  "identifiers": {
+    "browser": ["браузер", "интернет"],
+    "calculator": ["калькулятор", "счёт", "посчитай"],
+    "notepad": ["блокнот", "текст", "заметка", "нотепад"],
+    "mp3media": ["музыка", "трек", "плейлист"],
+    "photo": ["фото", "картинка", "изображение", "скрин"],
+    "youtube": ["ютуб", "ютюб", "видео", "youtube"],
+    "email": ["почта", "гугл почта"],
+    "github": ["гитхаб", "репозиторий", "гид"],
+    "sound": ["звук", "громкость"],
+    "system": ["система", "компьютер", "пк"],
+    "windows": ["окно"]
+  },
+  "verbs": {
+    "open": ["открой", "запусти", "включи", "покажи", "перейди на", "открыть"],
+    "close": ["закрой", "выключи", "убей", "останови", "закрыть"],
+    "play": ["проиграй", "включи музыку", "запусти трек"],
+    "pause": ["пауза", "останови воспроизведение", "поставь на паузу"],
+    "volume_up": ["громче", "прибавь звук", "сделай громче"],
+    "volume_down": ["тише", "убавь звук", "сделай тише"],
+    "mute_toggle": ["без звука", "включи звук", "выключи звук", "заглуши"],
+    "sleep": ["спящий режим", "успи пк", "переведи в сон"],
+    "logout": ["выйди из системы", "заверши сеанс"],
+    "maximize": ["разверни окно", "разверни"],
+    "switch_next": ["следующее окно", "переключи окно", "альт таб", "окно вперед"],
+    "deactivate": ["перестань слушать", "замолчи", "хватит", "отбой"],
+    "stop_assistant": ["стоп", "выключи джарвиса", "заверши работу", "на сегодня все"],
+    "shutdown": ["выключи", "отключи", "заверши"],
+    "next": ["следующий трек", "следующая песня", "дальше"],
+    "prev": ["предыдущий трек", "предыдущая песня", "назад"],
+    "minimize": ["сверни окно", "сверни", "минимизируй"],
+    "switch_prev": ["предыдущее окно", "назад по окнам", "альт шифт таб"],
+    "focus": ["активируй окно", "переключись на", "сделай активным"]
+  },
+  "actions": {
+    "browser": {
+      "open": { "type": "exeStart", "path": "C:\\Program Files\\Mozilla Firefox\\firefox.exe", "sound_out": "ok1.wav" },
+      "close": { "type": "killProcess", "process": "firefox.exe", "sound_out": "ok2.wav" }
+    },
+    "music": {
+      "play": { "type": "mediaPlay", "file": "C:\\Users\\User\\Music\\playlist.mp3", "sound_out": "ok1.wav" },
+      "pause": { "type": "mediaPause", "sound_out": "ok2.wav" },
+      "next": { "type": "mediaNext", "sound_out": "ok1.wav" },
+      "prev": { "type": "mediaPrev", "sound_out": "ok1.wav" }
+    },
+    "calculator": {
+      "open": { "type": "exeStart", "path": "calc.exe", "sound_out": "ok1.wav" },
+      "close": { "type": "killProcess", "process": "CalculatorApp.exe", "sound_out": "ok2.wav" }
+    },
+    "notepad": {
+      "open": { "type": "exeStart", "path": "notepad.exe", "sound_out": "ok1.wav" },
+      "close": { "type": "killProcess", "process": "notepad.exe", "sound_out": "ok2.wav" }
+    },
+    "mp3media": {
+      "play": { "type": "mediaPlay", "file": "C:\\Users\\User\\Music\\playlist.mp3", "sound_out": "ok1.wav" },
+      "pause": { "type": "mediaPause", "sound_out": "ok2.wav" }
+    },
+    "photo": {
+      "open": { "type": "fileOpen", "file": "C:\\Users\\User\\Picture\\image.jpeg", "sound_out": "ok1.wav" }
+    },
+    "youtube": {
+      "open": { "type": "urlOpen", "url": "https://www.youtube.com", "sound_out": "ok1.wav" }
+    },
+    "email": {
+      "open": { "type": "urlOpen", "url": "https://mail.google.com", "sound_out": "ok1.wav" }
+    },
+    "github": {
+      "open": { "type": "urlOpen", "url": "https://github.com", "sound_out": "ok1.wav" }
+    },
+    "sound": {
+      "volume_up": { "type": "volumeUp", "sound_out": "ok1.wav" },
+      "volume_down": { "type": "volumeDown", "sound_out": "ok1.wav" },
+      "mute_toggle": { "type": "volumeMuteToggle", "sound_out": "ok1.wav" }
+    },
+    "system": {
+      "shutdown": { "type": "systemShutdown", "sound_out": "ok1.wav" },
+      "sleep": { "type": "systemSleep", "sound_out": "ok1.wav" },
+      "logout": { "type": "systemLogout", "sound_out": "ok1.wav" },
+      "deactivate": { "type": "assistantDeactivate", "sound_out": "ok1.wav" },
+      "stop_assistant": { "type": "assistantStop", "sound_out": "ok1.wav" }
+    },
+    "windows": {
+      "maximize": { "type": "windowMaximize", "sound_out": "ok1.wav" },
+      "minimize": { "type": "windowMinimize", "sound_out": "ok1.wav" },
+      "close": { "type": "windowClose", "sound_out": "ok2.wav" },
+      "switch_next": { "type": "windowSwitchNext", "sound_out": "ok1.wav" },
+      "switch_prev": { "type": "windowSwitchPrev", "sound_out": "ok1.wav" },
+      "focus": { "type": "focusWindow", "title_contains": "", "sound_out": "ok1.wav" }
+    }
+  }
+}

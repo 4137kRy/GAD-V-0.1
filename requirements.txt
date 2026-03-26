@@ -1,0 +1,5 @@
+vosk>=0.3.45
+PyAudio>=0.2.12
+keyboard>=0.13.5
+PyGetWindow>=0.0.9
+rapidfuzz>=3.0.0
