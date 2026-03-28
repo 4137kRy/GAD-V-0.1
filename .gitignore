@@ -43,10 +43,6 @@ logs/
 # Configuration (пользовательский)
 config/commands.json
 
-# Sounds (пользовательские, кроме стандартных)
-sounds/
-!sounds/*.wav
-
 # OS
 .DS_Store
 Thumbs.db
