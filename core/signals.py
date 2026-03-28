@@ -44,7 +44,12 @@ def setup_signal_handlers(handler: Optional[Callable] = None) -> None:
         handler = signal_handler
 
     signal.signal(signal.SIGINT, handler)
-    signal.signal(signal.SIGTERM, handler)
+    
+    # SIGTERM не поддерживается на Windows для пользовательских обработчиков
+    import platform
+    if platform.system() != "Windows":
+        signal.signal(signal.SIGTERM, handler)
+    
     logger.debug("✅ Обработчики сигналов установлены")
 
 

@@ -39,7 +39,7 @@ from config import load_config, normalize_config, load_settings, get_microphone_
 # ==============================================================================
 # 3. Константы
 # ==============================================================================
-CONFIG_PATH = "config/commands.json"
+CONFIG_PATH = str(Path("config") / "commands.json")
 VAD_THRESHOLD = DEFAULT_THRESHOLD  # Порог VAD (настраивается)
 
 # Таймауты прослушивания (секунды)

@@ -1,20 +1,24 @@
 @echo off
-chcp 65001 >nul
+chcp 65001 >nul 2>&1
 setlocal enabledelayedexpansion
 
 echo ============================================================
-echo  Первый запуск голосового помощника Джарвис
+echo  Установка голосового помощника Джарвис (Windows 10)
 echo ============================================================
 echo.
 
-:: Проверка наличия Python
+:: ============================================================
+::  1. Проверка Python
+:: ============================================================
 where python >nul 2>&1
 if %errorlevel% neq 0 (
     echo [ERROR] Python не найден в системе!
+    echo.
     echo Установите Python 3.8+ с официального сайта:
     echo https://www.python.org/downloads/
     echo.
     echo ВАЖНО: При установке отметьте галочку "Add Python to PATH"
+    echo.
     pause
     exit /b 1
 )
@@ -38,39 +42,52 @@ if !py_major! EQU 3 if !py_minor! LSS 8 (
 echo [OK] Обнаружен Python !py_major!.!py_minor!
 echo.
 
-:: Проверка наличия requirements.txt
+:: ============================================================
+::  2. Проверка requirements.txt
+:: ============================================================
 if not exist "requirements.txt" (
     echo [ERROR] Файл requirements.txt не найден в корне проекта!
-    echo Убедитесь, что вы запускаете скрипт из папки проекта.
     pause
     exit /b 1
 )
 
-:: Создание папки models/ если её нет
+:: ============================================================
+::  3. Создание необходимых папок
+:: ============================================================
+echo Создаю необходимые папки...
+
 if not exist "models" (
-    echo Создаю папку для моделей распознавания: models\...
     mkdir models >nul 2>&1
-    if %errorlevel% neq 0 (
-        echo [ERROR] Не удалось создать папку 'models'. Запустите от имени администратора.
-        pause
-        exit /b 1
-    )
     echo [OK] Папка 'models' создана
 ) else (
     echo [INFO] Папка 'models' уже существует
 )
 
-:: Создание .gitkeep для отслеживания пустой папки в Git
 if not exist "models\.gitkeep" (
     type nul > models\.gitkeep
-    echo [OK] Добавлен файл .gitkeep для отслеживания папки в репозитории
 )
 
-:: ============================================================
-::  Проверка модели Vosk
-:: ============================================================
+if not exist "logs" (
+    mkdir logs >nul 2>&1
+    echo [OK] Папка 'logs' создана
+) else (
+    echo [INFO] Папка 'logs' уже существует
+)
+
+if not exist "sounds" (
+    mkdir sounds >nul 2>&1
+    echo [OK] Папка 'sounds' создана
+) else (
+    echo [INFO] Папка 'sounds' уже существует
+)
+
 echo.
+
+:: ============================================================
+::  4. Проверка модели Vosk
+:: ============================================================
 echo [INFO] Проверяю модель распознавания речи Vosk...
+echo.
 
 if exist "models\vosk-model-small-ru-0.22\conf\model.conf" (
     echo [OK] Модель Vosk уже установлена
@@ -89,44 +106,38 @@ if exist "models\vosk-model-small-ru-0.22\conf\model.conf" (
     echo          +-- am\
     echo          +-- conf\
     echo          +-- graph\
-    echo          +-- ...
+    echo.
 )
 
 :: ============================================================
-::  Проверка и создание commands.json
+::  5. Создание commands.json
 :: ============================================================
 echo.
 echo [INFO] Проверяю конфигурационный файл commands.json...
 
-if exist "config/commands.json" (
-    echo [OK] commands.json уже существует — пропускаем создание
-    echo    [TIP] Если нужно сбросить настройки, удалите commands.json вручную
+if exist "config\commands.json" (
+    echo [OK] commands.json уже существует
 ) else (
-    echo [INFO] commands.json не найден — создаю из шаблона...
-
     if not exist "config\default_commands.json" (
         echo [ERROR] Ошибка: default_commands.json не найден!
-        echo    Убедитесь, что файл шаблона находится в папке config/.
         pause
         exit /b 1
     )
 
-    :: Копирование с сохранением кодировки UTF-8
     copy /Y "config\default_commands.json" "config\commands.json" >nul 2>&1
-
     if %errorlevel% neq 0 (
         echo [ERROR] Не удалось создать commands.json
-        echo    Попробуйте запустить от имени администратора
         pause
         exit /b 1
     )
-
-    echo [OK] commands.json успешно создан из default_commands.json
+    echo [OK] commands.json создан из default_commands.json
 )
 
-:: Создание виртуального окружения
+:: ============================================================
+::  6. Создание виртуального окружения
+:: ============================================================
+echo.
 if not exist ".venv\Scripts\python.exe" (
-    echo.
     echo Создаю виртуальное окружение в папке .venv...
     python -m venv .venv
     if %errorlevel% neq 0 (
@@ -136,47 +147,55 @@ if not exist ".venv\Scripts\python.exe" (
     )
     echo [OK] Виртуальное окружение создано
 ) else (
-    echo [INFO] Виртуальное окружение .venv уже существует — пропускаем создание
+    echo [INFO] Виртуальное окружение уже существует
+)
+
+:: ============================================================
+::  7. Установка зависимостей
+:: ============================================================
+echo.
+echo Устанавливаю зависимости из requirements.txt...
+echo Это может занять несколько минут...
+echo.
+
+call .venv\Scripts\activate.bat >nul 2>&1
+
+:: Обновление pip
+python -m pip install --upgrade pip
+
+:: Установка зависимостей
+pip install -r requirements.txt
+set pip_result=%errorlevel%
+
+if %pip_result% neq 0 (
+    echo.
+    echo [WARNING] Не удалось установить некоторые зависимости через pip
+    echo [INFO] Попытка установки PyAudio через pipwin...
+    echo.
+    pip install pipwin
+    pipwin install pyaudio
+    echo [OK] PyAudio установлен через pipwin
 )
 
 echo.
-echo Устанавливаю зависимости из requirements.txt...
-call .venv\Scripts\activate.bat >nul 2>&1
-pip install --upgrade pip >nul 2>&1
-pip install -r requirements.txt >nul 2>&1
-
-if %errorlevel% neq 0 (
-    echo.
-    echo [ERROR] Ошибка при установке зависимостей
-    echo Попробуйте:
-    echo   1. Запустить от имени администратора
-    echo   2. Проверить интернет-соединение
-    echo   3. Выполнить вручную: .venv\Scripts\pip install -r requirements.txt
-    pause
-    exit /b 1
-)
-
 echo [OK] Все зависимости установлены
 echo.
 
 :: ============================================================
-::  Завершение установки
+::  8. Завершение установки
 :: ============================================================
 echo ============================================================
 echo  Установка завершена!
 echo ============================================================
 echo.
-:: Проверка модели и вывод инструкции
+
 if not exist "models\vosk-model-small-ru-0.22\conf\model.conf" (
     echo [WARNING] ВАЖНО: Модель распознавания речи не найдена!
     echo.
     echo Скачайте модель по ссылке:
     echo    https://alphacephei.com/vosk/models/vosk-model-small-ru-0.22.zip
     echo.
-    echo Распакуйте содержимое АРХИВА в папку:
-    echo    models\vosk-model-small-ru-0.22\
-    echo.
-    echo После этого запустите помощника через start.bat
+    echo Распакуйте в папку: models\vosk-model-small-ru-0.22\
     echo.
 ) else (
     echo [OK] Модель Vosk установлена — помощник готов к работе!
@@ -184,8 +203,9 @@ if not exist "models\vosk-model-small-ru-0.22\conf\model.conf" (
 )
 
 echo Следующие шаги:
-echo   - Запустите помощника: double-click на start.bat
+echo   1. Убедитесь, что модель Vosk скачана и распакована
+echo   2. Запустите помощника через start.win10.bat
 echo.
-echo [TIP] Совет: Папка .venv автоматически игнорируется в Git (.gitignore)
+echo [TIP] Для работы медиа-команд может потребоваться запуск от имени администратора
 echo.
 pause

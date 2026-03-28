@@ -27,9 +27,10 @@ def load_config(config_path: str = "commands.json") -> Dict[str, Any]:
     :raises ValueError: Если конфигурация некорректна
     :raises json.JSONDecodeError: Если JSON невалиден
     """
-    # Если путь содержит 'config/' — используем как есть, иначе добавляем
-    if Path(config_path).parts[0:1] == ('config',):
-        path = Path(config_path)
+    # Проверяем первую часть пути
+    path_obj = Path(config_path)
+    if path_obj.parts and path_obj.parts[0] == 'config':
+        path = path_obj
         if not path.is_absolute():
             path = get_project_root() / path
     else:
@@ -47,8 +48,14 @@ def load_config(config_path: str = "commands.json") -> Dict[str, Any]:
         logger.error(f"❌ Ошибка парсинга JSON: {e}")
         raise
     except UnicodeDecodeError as e:
-        logger.error(f"❌ Ошибка кодировки файла: {e}")
-        raise
+        # Пытаемся прочитать с кодировкой Windows-1251
+        logger.warning(f"⚠️ UTF-8 не подошёл, пробуем Windows-1251: {path}")
+        with open(path, "r", encoding="windows-1251") as f:
+            config = json.load(f)
+        # Пересохраняем в UTF-8
+        with open(path, "w", encoding=ENCODING) as f:
+            json.dump(config, f, ensure_ascii=False, indent=2)
+        logger.info(f"✅ Файл конвертирован в UTF-8: {path}")
 
     # Проверка обязательных разделов
     config_keys = set(config.keys())

@@ -23,6 +23,10 @@ class SoundPlayer:
         :param sounds_dir: Папка со звуковыми файлами
         """
         self.sounds_dir = Path(sounds_dir)
+        # Создаём папку если её нет
+        if not self.sounds_dir.exists():
+            self.sounds_dir.mkdir(parents=True, exist_ok=True)
+            logger.debug(f"📁 Папка sounds создана: {self.sounds_dir}")
 
     def play(self, sound_name: str) -> bool:
         """
@@ -62,7 +66,8 @@ class SoundPlayer:
             if os.name == 'nt':
                 try:
                     import winsound
-                    winsound.PlaySound(str(sound_path), winsound.SND_FILENAME)
+                    # SND_ASYNC для асинхронного воспроизведения
+                    winsound.PlaySound(str(sound_path), winsound.SND_FILENAME | winsound.SND_ASYNC)
                     logger.debug(f"🔊 Воспроизведён звук: {sound_name}")
                     return
                 except ImportError:

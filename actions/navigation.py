@@ -3,6 +3,7 @@
 Исполнитель команд навигации: URL, файлы.
 """
 import os
+import subprocess
 import webbrowser
 from pathlib import Path
 from typing import Dict, Any, Optional
@@ -96,7 +97,6 @@ class NavigationExecutor(ActionExecutor):
                 os.startfile(str(path))
             else:
                 # Linux/macOS
-                import subprocess
                 subprocess.run(["open" if os.name == "darwin" else "xdg-open", str(path)])
 
             logger.info(f"✅ Открыт файл: {file_path}")

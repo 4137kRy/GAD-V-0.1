@@ -14,7 +14,7 @@ from audio.stream import SAMPLE_RATE
 logger = get_logger(__name__)
 
 # Путь к модели по умолчанию
-DEFAULT_MODEL_PATH = "models/vosk-model-small-ru-0.22"
+DEFAULT_MODEL_PATH = str(Path("models") / "vosk-model-small-ru-0.22")
 
 
 class VoskRecognizer:
