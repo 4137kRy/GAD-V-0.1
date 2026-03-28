@@ -13,7 +13,7 @@ logger = get_logger(__name__)
 
 class AssistantExecutor(ActionExecutor):
     """
-    Управление ассистентом: deactivate, stop.
+    Управление ассистентом: deactivate, stop, restart.
     """
 
     def __init__(self, *args, **kwargs):
@@ -21,6 +21,7 @@ class AssistantExecutor(ActionExecutor):
         super().__init__(*args, **kwargs)
         self._should_stop = False
         self._should_deactivate = False
+        self._should_restart = False
 
     @property
     def should_stop(self) -> bool:
@@ -32,10 +33,20 @@ class AssistantExecutor(ActionExecutor):
         """Флаг деактивации ассистента."""
         return self._should_deactivate
 
+    @property
+    def should_restart(self) -> bool:
+        """Флаг перезапуска ассистента."""
+        return self._should_restart
+
     def reset_flags(self) -> None:
         """Сбрасывает флаги."""
         self._should_stop = False
         self._should_deactivate = False
+        # Флаг restart не сбрасываем — он обрабатывается в main.py
+
+    def reset_restart_flag(self) -> None:
+        """Сбрасывает флаг перезапуска после обработки."""
+        self._should_restart = False
 
     def execute(self, action_def: Dict[str, Any]) -> bool:
         """
@@ -62,12 +73,20 @@ class AssistantExecutor(ActionExecutor):
             self._should_stop = True
             success = True
 
+        elif action_type == "assistantRestart":
+            logger.info("🔁 Перезапуск помощника по команде...")
+            if sound_out:
+                self.play_sound(sound_out)
+                time.sleep(0.5)
+            self._should_restart = True
+            success = True
+
         # Для других типов (не assistant) — возвращаем False
-        if action_type not in ("assistantDeactivate", "assistantStop"):
+        if action_type not in ("assistantDeactivate", "assistantStop", "assistantRestart"):
             logger.warning(f"Неподдерживаемый тип действия: {action_type}")
             return False
 
-        # Звук уже воспроизведён для assistantStop
+        # Звук уже воспроизведён для assistantStop и assistantRestart
         if action_type == "assistantDeactivate" and sound_out:
             self.play_sound(sound_out)
 

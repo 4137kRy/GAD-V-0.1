@@ -76,6 +76,7 @@ class ActionDispatcher:
             # Assistant
             "assistantDeactivate": "assistant",
             "assistantStop": "assistant",
+            "assistantRestart": "assistant",
         }
 
     def execute(

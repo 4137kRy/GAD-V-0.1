@@ -411,7 +411,7 @@ class VoiceAssistant:
                     is_confirmation=is_confirmation,
                     is_waiting=is_waiting
                 )
-                
+
                 # Максимальная длительность записи
                 max_duration = self.session_manager.get_max_listen_duration()
 
@@ -441,6 +441,12 @@ class VoiceAssistant:
                     if self.handle_confirmation(norm_text):
                         if self.action_dispatcher.assistant_executor.should_stop:
                             break
+                        if self.action_dispatcher.assistant_executor.should_restart:
+                            logger.info("🔁 Запуск перезапуска...")
+                            self._cleanup_audio()
+                            if not self.init_audio():
+                                return 1
+                            self.action_dispatcher.assistant_executor.reset_restart_flag()
                     continue
 
                 # =====================================================================
@@ -461,6 +467,12 @@ class VoiceAssistant:
 
                     if self.action_dispatcher.assistant_executor.should_stop:
                         break
+                    if self.action_dispatcher.assistant_executor.should_restart:
+                        logger.info("🔁 Запуск перезапуска...")
+                        self._cleanup_audio()
+                        if not self.init_audio():
+                            return 1
+                        self.action_dispatcher.assistant_executor.reset_restart_flag()
 
                     continue
 
@@ -486,6 +498,13 @@ class VoiceAssistant:
                     if self.handle_command(corrected_text):
                         if self.action_dispatcher.assistant_executor.should_stop:
                             break
+                        # Проверяем флаг перезапуска после выполнения команды
+                        if self.action_dispatcher.assistant_executor.should_restart:
+                            logger.info("🔁 Запуск перезапуска...")
+                            self._cleanup_audio()
+                            if not self.init_audio():
+                                return 1
+                            self.action_dispatcher.assistant_executor.reset_restart_flag()
 
         except KeyboardInterrupt:
             logger.info("Получен сигнал прерывания")
@@ -508,6 +527,19 @@ class VoiceAssistant:
         logger.info("Голосовой помощник остановлен")
         logger.info("=" * 60)
         return 0
+
+    def _cleanup_audio(self) -> None:
+        """
+        Очищает аудио-ресурсы для перезапуска.
+        """
+        logger.info("🔇 Остановка аудио...")
+        if self.vad:
+            stats = self.vad.get_stats()
+            logger.info(f"📊 Статистика VAD: {stats}")
+        if self.audio_stream:
+            self.audio_stream.stop()
+            self.audio_stream.close()
+        logger.info("✅ Аудио остановлено")
 
 
 # ==============================================================================
