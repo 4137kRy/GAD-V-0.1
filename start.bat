@@ -2,21 +2,21 @@
 chcp 65001 >nul
 
 echo ============================================================
-echo  Запуск голосового помощника Джарвис
+echo  Zapusk golosovogo pomoshchnika Dzharvis
 echo ============================================================
 echo.
 
-:: Проверка существования виртуального окружения
+:: Proverka sushchestvovaniya virtual'nogo okruzheniya
 if not exist ".venv\Scripts\python.exe" (
-    echo [ERROR] Виртуальное окружение не найдено!
-    echo Запустите сначала firstStart.bat
+    echo [ERROR] Virtual'noe okruzhenie ne naydeno!
+    echo Zapustite snachala firstStart.bat
     echo.
     pause
     exit /b 1
 )
 
-:: Запуск помощника
+:: Zapusk pomoshchnika
 .venv\Scripts\python.exe main.py
 
-:: Закрываем окно (все логи в logs/assistant.log)
+:: Zakryvaem okno (vse logi v logs/assistant.log)
 exit

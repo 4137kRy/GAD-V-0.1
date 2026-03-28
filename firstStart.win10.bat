@@ -3,64 +3,64 @@ chcp 65001 >nul 2>&1
 setlocal enabledelayedexpansion
 
 echo ============================================================
-echo  Установка голосового помощника Джарвис (Windows 10)
+echo  Ustanovka golosovogo pomoshchnika Dzharvis (Windows 10)
 echo ============================================================
 echo.
 
 :: ============================================================
-::  1. Проверка Python
+::  1. Proverka Python
 :: ============================================================
-where python >nul 2>&1
+python --version >nul 2>&1
 if %errorlevel% neq 0 (
-    echo [ERROR] Python не найден в системе!
+    echo [ERROR] Python ne nayden v sisteme!
     echo.
-    echo Установите Python 3.8+ с официального сайта:
+    echo Ustanovite Python 3.8+ s ofitsial'nogo sayta:
     echo https://www.python.org/downloads/
     echo.
-    echo ВАЖНО: При установке отметьте галочку "Add Python to PATH"
+    echo VAZHNO: Pri ustanovke otmet'te galochku "Add Python to PATH"
     echo.
     pause
     exit /b 1
 )
 
-:: Определение версии Python
-for /f "tokens=2 delims=. " %%a in ('python --version 2^>^&1') do set py_major=%%a
-for /f "tokens=3 delims=. " %%a in ('python --version 2^>^&1') do set py_minor=%%a
+:: Opredeleniye versii Python
+for /f "tokens=2 delims=. " %%a in ('python --version 2^>^&1 ^| findstr /i "Python"') do set py_major=%%a
+for /f "tokens=3 delims=. " %%a in ('python --version 2^>^&1 ^| findstr /i "Python"') do set py_minor=%%a
 
-:: Проверка версии (требуется 3.8+)
+:: Proverka versii (trebuyetsya 3.8+)
 if !py_major! LSS 3 (
-    echo [ERROR] Требуется Python 3.8 или новее. Установлена версия !py_major!.!py_minor!
+    echo [ERROR] Trebuyetsya Python 3.8 ili noveye. Ustanovlena versiya !py_major!.!py_minor!
     pause
     exit /b 1
 )
 if !py_major! EQU 3 if !py_minor! LSS 8 (
-    echo [ERROR] Требуется Python 3.8 или новее. Установлена версия 3.!py_minor!
+    echo [ERROR] Trebuyetsya Python 3.8 ili noveye. Ustanovlena versiya 3.!py_minor!
     pause
     exit /b 1
 )
 
-echo [OK] Обнаружен Python !py_major!.!py_minor!
+echo [OK] Obnaruzhen Python !py_major!.!py_minor!
 echo.
 
 :: ============================================================
-::  2. Проверка requirements.txt
+::  2. Proverka requirements.txt
 :: ============================================================
 if not exist "requirements.txt" (
-    echo [ERROR] Файл requirements.txt не найден в корне проекта!
+    echo [ERROR] Fail requirements.txt ne nayden v korne proyekta!
     pause
     exit /b 1
 )
 
 :: ============================================================
-::  3. Создание необходимых папок
+::  3. Sozdaniye neobkhodimykh papok
 :: ============================================================
-echo Создаю необходимые папки...
+echo Sozdayu neobkhodimyye papki...
 
 if not exist "models" (
     mkdir models >nul 2>&1
-    echo [OK] Папка 'models' создана
+    echo [OK] Papka 'models' sozdana
 ) else (
-    echo [INFO] Папка 'models' уже существует
+    echo [INFO] Papka 'models' uzhe sushchestvuyet
 )
 
 if not exist "models\.gitkeep" (
@@ -69,38 +69,38 @@ if not exist "models\.gitkeep" (
 
 if not exist "logs" (
     mkdir logs >nul 2>&1
-    echo [OK] Папка 'logs' создана
+    echo [OK] Papka 'logs' sozdana
 ) else (
-    echo [INFO] Папка 'logs' уже существует
+    echo [INFO] Papka 'logs' uzhe sushchestvuyet
 )
 
 if not exist "sounds" (
     mkdir sounds >nul 2>&1
-    echo [OK] Папка 'sounds' создана
+    echo [OK] Papka 'sounds' sozdana
 ) else (
-    echo [INFO] Папка 'sounds' уже существует
+    echo [INFO] Papka 'sounds' uzhe sushchestvuyet
 )
 
 echo.
 
 :: ============================================================
-::  4. Проверка модели Vosk
+::  4. Proverka modeli Vosk
 :: ============================================================
-echo [INFO] Проверяю модель распознавания речи Vosk...
+echo [INFO] Proveryayu model' raspoznavaniya rechi Vosk...
 echo.
 
 if exist "models\vosk-model-small-ru-0.22\conf\model.conf" (
-    echo [OK] Модель Vosk уже установлена
+    echo [OK] Model' Vosk uzhe ustanovlena
 ) else (
-    echo [WARNING] Модель НЕ найдена в папке models\
+    echo [WARNING] Model' NE naydena v papke models\
     echo.
-    echo Скачайте модель по ссылке:
+    echo Skachayte model' po ssylke:
     echo    https://alphacephei.com/vosk/models/vosk-model-small-ru-0.22.zip
     echo.
-    echo Распакуйте содержимое АРХИВА в папку:
+    echo Raspakuyte soderzhimoye ARKHIVA v papku:
     echo    models\vosk-model-small-ru-0.22\
     echo.
-    echo    Правильная структура:
+    echo    Pravil'naya struktura:
     echo      models\
     echo      +-- vosk-model-small-ru-0.22\
     echo          +-- am\
@@ -110,102 +110,108 @@ if exist "models\vosk-model-small-ru-0.22\conf\model.conf" (
 )
 
 :: ============================================================
-::  5. Создание commands.json
+::  5. Sozdaniye commands.json
 :: ============================================================
 echo.
-echo [INFO] Проверяю конфигурационный файл commands.json...
+echo [INFO] Proveryayu konfiguratsionnyy fail commands.json...
 
 if exist "config\commands.json" (
-    echo [OK] commands.json уже существует
+    echo [OK] commands.json uzhe sushchestvuyet
 ) else (
     if not exist "config\default_commands.json" (
-        echo [ERROR] Ошибка: default_commands.json не найден!
+        echo [ERROR] Oshibka: default_commands.json ne nayden!
         pause
         exit /b 1
     )
 
     copy /Y "config\default_commands.json" "config\commands.json" >nul 2>&1
     if %errorlevel% neq 0 (
-        echo [ERROR] Не удалось создать commands.json
+        echo [ERROR] Ne udalos' sozdat' commands.json
         pause
         exit /b 1
     )
-    echo [OK] commands.json создан из default_commands.json
+    echo [OK] commands.json sozdan iz default_commands.json
 )
 
 :: ============================================================
-::  6. Создание виртуального окружения
+::  6. Sozdaniye virtual'nogo okruzheniya
 :: ============================================================
 echo.
 if not exist ".venv\Scripts\python.exe" (
-    echo Создаю виртуальное окружение в папке .venv...
-    python -m venv .venv
+    echo Sozdayu virtual'noye okruzheniye v papke .venv...
+    python -m venv .venv --clear
     if %errorlevel% neq 0 (
-        echo [ERROR] Ошибка при создании виртуального окружения
+        echo [ERROR] Oshibka pri sozdanii virtual'nogo okruzheniya
         pause
         exit /b 1
     )
-    echo [OK] Виртуальное окружение создано
+    echo [OK] Virtual'noye okruzheniye sozdano
 ) else (
-    echo [INFO] Виртуальное окружение уже существует
+    echo [INFO] Virtual'noye okruzheniye uzhe sushchestvuyet
 )
 
 :: ============================================================
-::  7. Установка зависимостей
+::  7. Ustanovka zavisimostey
 :: ============================================================
 echo.
-echo Устанавливаю зависимости из requirements.txt...
-echo Это может занять несколько минут...
+echo Ustanavlivayu zavisimosti iz requirements.txt...
+echo Eto mozhet zanyat' neskol'ko minut...
 echo.
 
 call .venv\Scripts\activate.bat >nul 2>&1
 
-:: Обновление pip
-python -m pip install --upgrade pip
+:: Obnovleniye pip
+echo [1/3] Obnovleniye pip...
+python -m pip install --upgrade pip --quiet
 
-:: Установка зависимостей
-pip install -r requirements.txt
+:: Popytka ustanovki cherez pip, pri neudache - cherez pipwin dlya PyAudio
+echo [2/3] Ustanovka osnovnykh zavisimostey...
+pip install -r requirements.txt --quiet
 set pip_result=%errorlevel%
 
 if %pip_result% neq 0 (
     echo.
-    echo [WARNING] Не удалось установить некоторые зависимости через pip
-    echo [INFO] Попытка установки PyAudio через pipwin...
+    echo [WARNING] Ne udalos' ustanovit' nekotoryye zavisimosti cherez pip
+    echo [INFO] Popytka ustanovki PyAudio cherez pipwin...
     echo.
-    pip install pipwin
-    pipwin install pyaudio
-    echo [OK] PyAudio установлен через pipwin
+    pip install pipwin --quiet
+    pipwin install pyaudio --quiet
+    echo [OK] PyAudio ustanovlen cherez pipwin
 )
 
+:: Ochistka kesha pip
+echo [3/3] Ochistka kesha...
+pip cache purge >nul 2>&1
+
 echo.
-echo [OK] Все зависимости установлены
+echo [OK] Vse zavisimosti ustanovleny
 echo.
 
 :: ============================================================
-::  8. Завершение установки
+::  8. Zaversheniye ustanovki
 :: ============================================================
 echo ============================================================
-echo  Установка завершена!
+echo  Ustanovka zavershena!
 echo ============================================================
 echo.
 
 if not exist "models\vosk-model-small-ru-0.22\conf\model.conf" (
-    echo [WARNING] ВАЖНО: Модель распознавания речи не найдена!
+    echo [WARNING] VAZHNO: Model' raspoznavaniya rechi ne naydena!
     echo.
-    echo Скачайте модель по ссылке:
+    echo Skachayte model' po ssylke:
     echo    https://alphacephei.com/vosk/models/vosk-model-small-ru-0.22.zip
     echo.
-    echo Распакуйте в папку: models\vosk-model-small-ru-0.22\
+    echo Raspakuyte v papku: models\vosk-model-small-ru-0.22\
     echo.
 ) else (
-    echo [OK] Модель Vosk установлена — помощник готов к работе!
+    echo [OK] Model' Vosk ustanovlena — pomoshchnik gotov k rabote!
     echo.
 )
 
-echo Следующие шаги:
-echo   1. Убедитесь, что модель Vosk скачана и распакована
-echo   2. Запустите помощника через start.win10.bat
+echo Sleduyushiye shagi:
+echo   1. Ubedites', chto model' Vosk skachana i raspakovana
+echo   2. Zapustite pomoshchnika cherez start.win10.bat
 echo.
-echo [TIP] Для работы медиа-команд может потребоваться запуск от имени администратора
+echo [TIP] Dlya raboty media-komand mozhet potrebovat'sya zapusk ot imeni administratora
 echo.
 pause
