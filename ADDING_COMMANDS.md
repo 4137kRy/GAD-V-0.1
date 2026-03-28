@@ -848,4 +848,4 @@ Get-Content config\commands.json | ConvertFrom-Json
 ---
 
 **GAD — Офлайн Голосовой Помощник**  
-[GitHub](https://github.com/4137kRy/GAD) | [Лицензия MIT](../LICENSE)
+[GitHub](https://github.com/4137kRy/GAD-V-0.1) | [Лицензия MIT](../LICENSE)
