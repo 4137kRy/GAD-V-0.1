@@ -444,6 +444,8 @@ class VoiceAssistant:
                         if self.action_dispatcher.assistant_executor.should_restart:
                             logger.info("🔁 Запуск перезапуска...")
                             self._cleanup_audio()
+                            if not self.load_config():
+                                return 1
                             if not self.init_audio():
                                 return 1
                             self.action_dispatcher.assistant_executor.reset_restart_flag()
@@ -470,6 +472,8 @@ class VoiceAssistant:
                     if self.action_dispatcher.assistant_executor.should_restart:
                         logger.info("🔁 Запуск перезапуска...")
                         self._cleanup_audio()
+                        if not self.load_config():
+                            return 1
                         if not self.init_audio():
                             return 1
                         self.action_dispatcher.assistant_executor.reset_restart_flag()
@@ -502,6 +506,8 @@ class VoiceAssistant:
                         if self.action_dispatcher.assistant_executor.should_restart:
                             logger.info("🔁 Запуск перезапуска...")
                             self._cleanup_audio()
+                            if not self.load_config():
+                                return 1
                             if not self.init_audio():
                                 return 1
                             self.action_dispatcher.assistant_executor.reset_restart_flag()

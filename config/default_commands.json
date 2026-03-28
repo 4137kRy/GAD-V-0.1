@@ -1,6 +1,7 @@
 {
   "activation_phrases": [
     "джарвис",
+    "саша",
     "эй помощник",
     "слушай"
   ],
@@ -15,11 +16,17 @@
     "github": ["гитхаб", "репозиторий", "гид"],
     "sound": ["звук", "громкость"],
     "system": ["система", "компьютер", "пк"],
-    "windows": ["окно"]
+    "windows": ["окно"],
+    "telegram": ["телегу", "телеграмм", "тг"],
+    "explorer": ["проводник", "менеджер"],
+    "openSettings": ["настройки"],
+    "find": ["гугл", "google"],
+    "_any": ["найди", "поиск", "погугли", "загугли"]
   },
   "verbs": {
     "open": ["открой", "запусти", "включи", "покажи", "перейди на", "открыть"],
     "close": ["закрой", "выключи", "убей", "останови", "закрыть"],
+    "restart": ["рестарт", "перезагрузи"],
     "play": ["проиграй", "включи музыку", "запусти трек"],
     "pause": ["пауза", "останови воспроизведение", "поставь на паузу"],
     "volume_up": ["громче", "прибавь звук", "сделай громче"],
@@ -36,18 +43,26 @@
     "prev": ["предыдущий трек", "предыдущая песня", "назад"],
     "minimize": ["сверни окно", "сверни", "минимизируй"],
     "switch_prev": ["предыдущее окно", "назад по окнам", "альт шифт таб"],
-    "focus": ["активируй окно", "переключись на", "сделай активным"]
+    "focus": ["активируй окно", "переключись на", "сделай активным"],
+    "search": ["найди", "поиск", "погугли", "загугли"]
   },
   "actions": {
     "browser": {
       "open": { "type": "exeStart", "path": "C:\\Program Files\\Mozilla Firefox\\firefox.exe", "sound_out": "ok1.wav" },
       "close": { "type": "killProcess", "process": "firefox.exe", "sound_out": "ok2.wav" }
     },
+    "explorer": {
+      "open": { "type": "exeStart", "path": "C:\\Windows\\explorer.exe", "sound_out": "ok1.wav" }
+    },
     "music": {
       "play": { "type": "mediaPlay", "file": "C:\\Users\\User\\Music\\playlist.mp3", "sound_out": "ok1.wav" },
       "pause": { "type": "mediaPause", "sound_out": "ok2.wav" },
       "next": { "type": "mediaNext", "sound_out": "ok1.wav" },
       "prev": { "type": "mediaPrev", "sound_out": "ok1.wav" }
+    },
+    "telegram": {
+      "open": { "type": "exeStart", "path": "C:\\Users\\User\\AppData\\Roaming\\Telegram Desktop\\Telegram.exe", "sound_out": "ok1.wav" },
+      "close": { "type": "killProcess", "process": "Telegram.exe", "sound_out": "ok2.wav" }
     },
     "calculator": {
       "open": { "type": "exeStart", "path": "calc.exe", "sound_out": "ok1.wav" },
@@ -64,6 +79,9 @@
     "photo": {
       "open": { "type": "fileOpen", "file": "C:\\Users\\User\\Picture\\image.jpeg", "sound_out": "ok1.wav" }
     },
+    "openSettings": {
+      "open": { "type": "fileOpen", "file": "config/commands.json", "sound_out": "ok1.wav" }
+    },
     "youtube": {
       "open": { "type": "urlOpen", "url": "https://www.youtube.com", "sound_out": "ok1.wav" }
     },
@@ -79,11 +97,12 @@
       "mute_toggle": { "type": "volumeMuteToggle", "sound_out": "ok1.wav" }
     },
     "system": {
-      "shutdown": { "type": "systemShutdown", "sound_out": "ok1.wav" },
+      "shutdown": { "type": "systemShutdown", "sound_out": "ok1.wav", "requires_confirmation": true },
       "sleep": { "type": "systemSleep", "sound_out": "ok1.wav" },
       "logout": { "type": "systemLogout", "sound_out": "ok1.wav" },
       "deactivate": { "type": "assistantDeactivate", "sound_out": "ok1.wav" },
-      "stop_assistant": { "type": "assistantStop", "sound_out": "ok1.wav" }
+      "stop_assistant": { "type": "assistantStop", "sound_out": "ok1.wav" },
+      "restart": { "type": "assistantRestart", "sound_out": "ok1.wav" }
     },
     "windows": {
       "maximize": { "type": "windowMaximize", "sound_out": "ok1.wav" },
@@ -92,6 +111,12 @@
       "switch_next": { "type": "windowSwitchNext", "sound_out": "ok1.wav" },
       "switch_prev": { "type": "windowSwitchPrev", "sound_out": "ok1.wav" },
       "focus": { "type": "focusWindow", "title_contains": "", "sound_out": "ok1.wav" }
+    },
+    "find": {
+      "search": { "type": "webSearch", "query": "", "sound_out": "ok1.wav" }
+    },
+    "_any": {
+      "search": { "type": "webSearch", "query": "", "sound_out": "ok1.wav" }
     }
   }
 }

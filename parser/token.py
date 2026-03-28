@@ -107,9 +107,9 @@ def find_token_command(
                         return (ident_key, verb_key)
 
     # 3. Поиск системных команд (только Действие) — требует явного системного глагола
-    # Системные команды: shutdown, sleep, logout, deactivate, stop_assistant
+    # Системные команды: shutdown, sleep, logout, deactivate, stop_assistant, restart
     # Не должны срабатывать для обычных глаголов типа "выключи", "открой" и т.д.
-    system_specific_verbs = {"shutdown", "sleep", "logout", "deactivate", "stop_assistant"}
+    system_specific_verbs = {"shutdown", "sleep", "logout", "deactivate", "stop_assistant", "restart"}
     
     for token in tokens:
         if token in word_to_verb:
